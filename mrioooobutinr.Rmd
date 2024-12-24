@@ -1,0 +1,42 @@
+---
+title: "mrio_visualizations"
+author: "Megan Zhang"
+date: "2024-12-21"
+output: html_document
+---
+
+```{r libraries}
+library(ggplot2)  
+library(reshape2)  
+library(plotly)  
+library(corrplot)
+library(pheatmap)
+```
+
+```{r load matrices}
+io_table <- read.csv("C:/Users/megan/mz_codes/broadband-mrio/eora_bb.csv", header = FALSE)
+
+```
+
+```{r 2}
+sector_names <- io_table[2, -c(1, 2)]  # Sector names excluding first two columns
+region_and_sector <- io_table[, 1:2]   # First two columns for region/sector labels
+numeric_data <- as.matrix(io_table[-(1:3), -c(1, 2)])
+```
+
+```{r 3}
+sectors_of_interest <- c("Post and Telecommunications","Electrical and Machinery","Construction","Transport","Finacial Intermediation and Business Activities")
+
+total_output <- sapply(sectors_of_interest, function(sector) {
+  col_indices <- which(sector_names == sector)  
+  sum(numeric_data[, col_indices], na.rm = TRUE)  
+})
+
+barplot(total_output, 
+        main = "Total Output Difference by Sector", 
+        col = "steelblue", 
+        xlab = "Sectors", 
+        ylab = "Total Monetary Value", 
+        names.arg = sectors_of_interest, 
+        las = 2)  # Rotate axis labels for readability
+```
